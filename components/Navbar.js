@@ -52,7 +52,7 @@ const Navbar = () => {
               </button>
               <a href="/" class="flex ms-2 md:me-24">
                 <img
-                  src="/logo.png"
+                  src="/logo_main.png"
                   class="h-8 me-3"
                   alt="FlowBite Logo"
                 />
@@ -182,13 +182,13 @@ const Navbar = () => {
                       class="text-sm text-gray-900 dark:text-white"
                       role="none"
                     >
-                      HandMakers
+                      BharatGen
                     </p>
                     <p
                       class="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                       role="none"
                     >
-                      handmakers@gm.com
+                      tobharatgen@gmail.com
                     </p>
                   </div>
                   <ul class="py-1" role="none">
