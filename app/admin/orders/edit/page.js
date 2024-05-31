@@ -161,14 +161,15 @@ const Page = () => {
 
 
   const [CustomersList, setCustomersList] = useState([]);
+  const [SalesManList, setSalesManList] = useState([]);
   const [ProductList, setProductList] = useState([]);
+
 
 
   const [CustomerID, setCustomerID] = useState("")
   const [CustomerName, setCustomerName] = useState("")
   const [CustomerPhone, setCustomerPhone] = useState("")
   const [CustomerEmail, setCustomerEmail] = useState("")
-
   const [TotalAmount, setTotalAmount] = useState("")
   const [TrackingNo, setTrackingNo] = useState("")
   const [cost, setCost] = useState('');
@@ -185,7 +186,7 @@ const Page = () => {
   const [PaymentID, setPaymentID] = useState([])
   const [TrackingID, setTrackingID] = useState([])
 
-  const [SalesChannel, setSalesChannel] = useState("")
+  const [SalesChannel, setSalesChannel] = useState("None")
   const [Address, setAddress] = useState("")
   const [Pincode, setPincode] = useState("")
 
@@ -286,6 +287,26 @@ const Page = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+
+
+      fetch("/api/getSalesMan", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            console.log(data.SalesMans);
+            setSalesManList(data.SalesMans)
+          } else {
+            console.error("API request failed");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+  
   }, []);
 
 
@@ -497,7 +518,7 @@ const Page = () => {
 
 
               <div className="flex-1">
-                <label htmlFor="sc" className="block mb-2 text-sm font-medium text-gray-900">Sales Channel</label>
+                <label htmlFor="sc" className="block mb-2 text-sm font-medium text-gray-900">Sales Man</label>
                 <select
                   value={SalesChannel}
                   onChange={(e) => setSalesChannel(e.target.value)}
@@ -505,11 +526,12 @@ const Page = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 outline-0"
                   required
                 >
-                  <option value="">Select Sales Channel</option>
-                  <option value="Others">Others</option>
-                  <option value="Referal">Referal</option>
+                   <option value={"None"} >None</option>
+                  {SalesManList.map((salesman) => (
+                    <option key={salesman._id} value={`${salesman.SalesManName} (${salesman.SalesManID})`} >{salesman.SalesManName}</option>
+                  ))}
                 </select>
-              </div>
+                </div>
 
 
             </div>

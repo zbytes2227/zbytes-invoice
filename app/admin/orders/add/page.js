@@ -62,7 +62,7 @@ const Page = () => {
       setTotalSum(parseFloat((sum + (sum * 0.18)).toFixed(2)));
       setTotalGST(parseFloat((sum * 0.18).toFixed(2)));
     }
-    
+
     if (GSTtax === "sc_GST5") {
       setTotalSum(parseFloat((sum + (sum * 0.05)).toFixed(2)));
       setTotalGST(parseFloat((sum * 0.05).toFixed(2)));
@@ -81,6 +81,7 @@ const Page = () => {
 
 
   const [CustomersList, setCustomersList] = useState([]);
+  const [SalesManList, setSalesManList] = useState([]);
   const [ProductList, setProductList] = useState([]);
 
   const [OrderID, setOrderID] = useState("")
@@ -105,7 +106,7 @@ const Page = () => {
   const [PaymentID, setPaymentID] = useState([])
   const [TrackingID, setTrackingID] = useState([])
 
-  const [SalesChannel, setSalesChannel] = useState("")
+  const [SalesChannel, setSalesChannel] = useState("None")
   const [Address, setAddress] = useState("")
   const [Pincode, setPincode] = useState("")
 
@@ -189,6 +190,25 @@ const Page = () => {
         console.error("Error fetching data:", error);
       });
 
+    fetch("/api/getSalesMan", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(data.SalesMans);
+          setSalesManList(data.SalesMans)
+        } else {
+          console.error("API request failed");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+
+
     fetch("/api/getProduct", {
       method: "GET",
       headers: {
@@ -221,8 +241,8 @@ const Page = () => {
       PaymentID: PaymentID,
       TrackingID: TrackingID,
       TrackingStatus: TrackingStatus,
-      TaxType : GSTtax,
-      GST : TotalGST,
+      TaxType: GSTtax,
+      GST: TotalGST,
       Total: totalSum
     }
     console.log(postData);
@@ -416,7 +436,7 @@ const Page = () => {
 
 
               <div className="flex-1">
-                <label htmlFor="sc" className="block mb-2 text-sm font-medium text-gray-900">Sales Channel</label>
+                <label htmlFor="sc" className="block mb-2 text-sm font-medium text-gray-900">Sales Man</label>
                 <select
                   value={SalesChannel}
                   onChange={(e) => setSalesChannel(e.target.value)}
@@ -424,10 +444,14 @@ const Page = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 outline-0"
                   required
                 >
-                  <option value="">Select Sales Channel</option>
-                  <option value="Others">Others</option>
-                  <option value="Referal">Referal</option>
+                   <option value="None" >None</option>
+                  {SalesManList.map((salesman) => (
+                    <option key={salesman._id} value={`${salesman.SalesManName} (${salesman.SalesManID})`} >{salesman.SalesManName}</option>
+                  ))}
                 </select>
+
+
+
               </div>
 
 
@@ -506,38 +530,38 @@ const Page = () => {
           </tbody>
         </table>
         <div className="flex items-start mt-4 flex-col justify-start">
-<div>
+          <div>
 
-          Inter-state GST : 
-        <select
-          value={GSTtax}
-          onChange={(e) => {
-            setGSTtax(e.target.value);
-          }}
-          className="me-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block my-2 p-2.5"
-        >
-          <option value="none">No GST 0%</option>
-          <option value="i_GST5">i GST - 5%</option>
-          <option value="i_GST12">i GST - 12%</option>
-          <option value="i_GST18">i GST - 18%</option>
-        </select>
-        </div>
+            Inter-state GST :
+            <select
+              value={GSTtax}
+              onChange={(e) => {
+                setGSTtax(e.target.value);
+              }}
+              className="me-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block my-2 p-2.5"
+            >
+              <option value="none">No GST 0%</option>
+              <option value="i_GST5">i GST - 5%</option>
+              <option value="i_GST12">i GST - 12%</option>
+              <option value="i_GST18">i GST - 18%</option>
+            </select>
+          </div>
 
-        State + Central GST : 
-        <select
-          value={GSTtax}
-          onChange={(e) => {
-            setGSTtax(e.target.value);
-          }}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block my-2 p-2.5"
-        >
-          <option value="none">No GST 0%</option>
-          <option value="sc_GST5">S GST 2.5% + C GST 2.5%</option>
-          <option value="sc_GST12">S GST 6% + C GST 6%</option>
-          <option value="sc_GST18">S GST 18% + C GST 18%</option>
-        </select>
+          State + Central GST :
+          <select
+            value={GSTtax}
+            onChange={(e) => {
+              setGSTtax(e.target.value);
+            }}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block my-2 p-2.5"
+          >
+            <option value="none">No GST 0%</option>
+            <option value="sc_GST5">S GST 2.5% + C GST 2.5%</option>
+            <option value="sc_GST12">S GST 6% + C GST 6%</option>
+            <option value="sc_GST18">S GST 18% + C GST 18%</option>
+          </select>
 
-        <div className="text-xl mt-2">Total GST: ₹{TotalGST}</div>
+          <div className="text-xl mt-2">Total GST: ₹{TotalGST}</div>
 
         </div>
         <div className="flex items-center justify-end">
@@ -790,7 +814,7 @@ const Page = () => {
         </div>
 
       </div>
-{/* sdd */}
+      {/* sdd */}
     </>
   );
 };

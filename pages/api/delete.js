@@ -7,6 +7,7 @@ import { parse } from "cookie";
 import jwt from "jsonwebtoken";
 import Payments from "@/model/Payments";
 import Tracking from "@/model/Tracking";
+import SalesMan from "@/model/SalesMan";
 
 const handler = async (req, res) => {
     if (req.method === "POST") {
@@ -38,6 +39,15 @@ const handler = async (req, res) => {
                         .json({ success: false, msg: "ProductID not found." });
                 }
                 return res.json({ success: true, msg: "ProductID deleted successfully." });
+            }
+            else if (delType === 'salesman') {
+                const result = await SalesMan.deleteOne({ SalesManID: req.body.id });
+                if (result.deletedCount === 0) {
+                    return res
+                        .status(404)
+                        .json({ success: false, msg: "SalesMan not found." });
+                }
+                return res.json({ success: true, msg: "SalesMan deleted successfully." });
             }
             else if (delType === 'orders') {
                 const result = await Orders.deleteOne({ OrderID: req.body.id });

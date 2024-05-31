@@ -3,6 +3,30 @@ import Customers from "@/model/Customers";
 import connectDb from "../../middleware/mongoose";
 import Orders from "@/model/Orders";
 import { parse } from "cookie"; import jwt from "jsonwebtoken";
+import Products from "@/model/Products";
+
+const updateProductStocks = async (productsToUpdate) => {
+  try {
+    for (let item of productsToUpdate) {
+      const { productId, quantity } = item;
+
+      // Find the product by ProductID
+      let product = await Products.findOne({ ProductID: productId });
+      if (product) {
+        // Update the ProductStock
+        product.ProductStock = (parseInt(product.ProductStock) - parseInt(quantity)).toString();
+        await product.save();
+      } else {
+        console.log(`Product with ID ${productId} not found`);
+      }
+    }
+    return { status: 'success', message: 'Products updated successfully' };
+  } catch (error) {
+    console.error(error);
+    return { status: 'error', message: 'Server error' };
+  }
+};
+
 
 
 const handler = async (req, res) => {
@@ -31,6 +55,10 @@ const handler = async (req, res) => {
         return res.status(400).json({ success: false, msg: "Customer not found" });
       }
 
+      console.log("UJJWAL");
+      console.log(req.body.Products);
+      updateProductStocks (req.body.Products);
+      
       const newCard = new Orders({
         OrderID: req.body.OrderID,
         CustomerID: req.body.CustomerID,
